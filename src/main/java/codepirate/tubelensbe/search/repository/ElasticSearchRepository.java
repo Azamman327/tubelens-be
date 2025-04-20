@@ -43,4 +43,23 @@ public class ElasticSearchRepository {
                 ))
                 .collect(Collectors.toList());
     }
+
+    public List<String> autocomplete(String keyword) throws IOException {
+        SearchRequest searchRequest = SearchRequest.of(s -> s
+                .index("tubelens_videos")  // 인덱스명 수정
+                .query(q -> q
+                        .matchPhrasePrefix(m -> m
+                                .field("title") // title.keyword 필드로 검색
+                                .query(keyword)// 사용자가 입력한 키워드로 제목 검색
+                        )
+                )
+        );
+
+        SearchResponse<VideoSearch> searchResponse = elasticsearchClient.search(searchRequest, VideoSearch.class);
+
+        return searchResponse.hits().hits().stream()
+                .map(hit -> hit.source().getTitle()) // VideoSearch 객체에서 제목 추출
+                .collect(Collectors.toList());
+
+    }
 }

@@ -20,4 +20,9 @@ class SearchController {
     public List<VideoSearch> search(@RequestParam String keyword) throws IOException {
         return elasticSearchService.searchVideos(keyword);
     }
+
+    @GetMapping("/autocomplete")
+    public List<String> autocomplete(@RequestParam String keyword) throws IOException {
+        return elasticSearchService.autocomplete(keyword);
+    }
 }
